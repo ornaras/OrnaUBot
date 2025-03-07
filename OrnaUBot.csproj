@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>OrnaUBot</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishTrimmed>True</PublishTrimmed>
+    <PublishAot>True</PublishAot>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <AssemblyName>OrnaUBot</AssemblyName>
+    <Company>OrnarasUS</Company>
+    <Product>OrnaUBot</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".wiki\Configurations.md" />
+  </ItemGroup>
+
+</Project>
