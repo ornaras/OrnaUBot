@@ -45,7 +45,7 @@ internal static class Borshch18
         }
         res.Append($"<tg-spoiler>{sum}₽</tg-spoiler>");
 
-        var msg = await TelegramBot.SendMessage(Configuration.Telegram_Me_Id, res.ToString());
+        var msg = await TelegramBot.SendMessage(Configuration.telegramMeId, res.ToString());
 
         return msg ?? "OK";
     }

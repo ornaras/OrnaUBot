@@ -4,12 +4,14 @@ namespace OrnaUBot;
 
 internal static class Configuration
 {
-    public static string SMB_ScanKass_Path { get; private set; } = null!;
-    public static string Project_ScanKass_Path { get; private set; } = null!;
-    public static string Telegram_Bot_Token { get; private set; } = null!;
-    public static string SMB_Local_Path { get; private set; } = null!;
-    public static long Telegram_Tester_Id { get; private set; }
-    public static long Telegram_Me_Id { get; private set; }
+#pragma warning disable IDE1006
+    public static string smbScankassPath { get; private set; } = null!;
+    public static string projectScankassPath { get; private set; } = null!;
+    public static string telegramBotToken { get; private set; } = null!;
+    public static string smbLocalPath { get; private set; } = null!;
+    public static long telegramTesterId { get; private set; }
+    public static long telegramMeId { get; private set; }
+#pragma warning restore IDE1006
 
     internal static string AppDataPath => 
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OrnaUBot");
@@ -26,26 +28,11 @@ internal static class Configuration
         var content = File.ReadAllText(path);
         var json = JsonNode.Parse(content)!;
         
-        SMB_ScanKass_Path = json[FormatText(nameof(SMB_ScanKass_Path))]!.GetValue<string>();
-        Project_ScanKass_Path = json[FormatText(nameof(Project_ScanKass_Path))]!.GetValue<string>();
-        Telegram_Bot_Token = json[FormatText(nameof(Telegram_Bot_Token))]!.GetValue<string>();
-        SMB_Local_Path = json[FormatText(nameof(SMB_Local_Path))]!.GetValue<string>();
-        Telegram_Tester_Id = json[FormatText(nameof(Telegram_Tester_Id))]!.GetValue<long>();
-        Telegram_Me_Id = json[FormatText(nameof(Telegram_Me_Id))]!.GetValue<long>();
-    }
-
-    private static string FormatText(string text)
-    {
-        text = text.ToLower();
-        var res = "";
-        for(var i = 0; i < text.Length; i++)
-        {
-            if (text[i] == '_')
-            {
-                i++;
-                res += $"{text[i]}".ToUpper();
-            } else res += text[i];
-        }
-        return res;
+        smbScankassPath = json[nameof(smbScankassPath)]!.GetValue<string>();
+        projectScankassPath = json[nameof(projectScankassPath)]!.GetValue<string>();
+        telegramBotToken = json[nameof(telegramBotToken)]!.GetValue<string>();
+        smbLocalPath = json[nameof(smbLocalPath)]!.GetValue<string>();
+        telegramTesterId = json[nameof(telegramTesterId)]!.GetValue<long>();
+        telegramMeId = json[nameof(telegramMeId)]!.GetValue<long>();
     }
 }

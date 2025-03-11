@@ -32,9 +32,9 @@ internal static class ScanKass
         } while (true);
 
         #region Выгрузка с SMB
-        var installer_path = Path.Combine(Configuration.Project_ScanKass_Path, "ScanKassInstaller");
+        var installer_path = Path.Combine(Configuration.projectScankassPath, "ScanKassInstaller");
         var app_path = Path.Combine(installer_path, "app");
-        var msg = CopyAllFiles(Configuration.SMB_ScanKass_Path, app_path, ["zip","db"], "Не удалось скопировать файлы с сервера");
+        var msg = CopyAllFiles(Configuration.smbScankassPath, app_path, ["zip","db"], "Не удалось скопировать файлы с сервера");
         if (msg is not null) return msg;
         #endregion
 
@@ -47,21 +47,21 @@ internal static class ScanKass
         #region Перенос инсталятора
         var installer_filename = "ScanKassSetup.exe";
         File.Move(Path.Combine(installer_path, installer_filename), 
-            Path.Combine(Configuration.SMB_Local_Path, installer_filename), true);
+            Path.Combine(Configuration.smbLocalPath, installer_filename), true);
         #endregion
 
         #region Отправка тестировщику уведомления
 
         if (!isRemote)
         {
-            var message = $"<b>ScanKassSetup был обновлен</b> и ожидает проверку по пути <code>{Configuration.SMB_Local_Path.Replace("\\", @"\\")}</code>";
-            msg = await TelegramBot.SendMessage(Configuration.Telegram_Tester_Id, message, "Не удалось оповестить тестировщика");
+            var message = $"<b>ScanKassSetup был обновлен</b> и ожидает проверку по пути <code>{Configuration.smbLocalPath.Replace("\\", @"\\")}</code>";
+            msg = await TelegramBot.SendMessage(Configuration.telegramTesterId, message, "Не удалось оповестить тестировщика");
         }
         else
         {
             var message = $"Сборка {DateTime.Now:yyyy'-'MM'-'dd' 'HH':'mm}";
-            var filepath = Path.Combine(Configuration.SMB_Local_Path, installer_filename);
-            msg = await TelegramBot.SendFile(Configuration.Telegram_Tester_Id, message, filepath, "Не удалось отправить дистрибутив");
+            var filepath = Path.Combine(Configuration.smbLocalPath, installer_filename);
+            msg = await TelegramBot.SendFile(Configuration.telegramTesterId, message, filepath, "Не удалось отправить дистрибутив");
         }
 
         #endregion

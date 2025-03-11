@@ -6,7 +6,7 @@ namespace OrnaUBot.Utils
 {
     internal static class TelegramBot
     {
-        private static string UrlApi => $"https://api.telegram.org/bot{Configuration.Telegram_Bot_Token}";
+        private static string UrlApi => $"https://api.telegram.org/bot{Configuration.telegramBotToken}";
 
         /// <summary>
         /// Отправка личного сообщения в Telegram
@@ -19,7 +19,7 @@ namespace OrnaUBot.Utils
         {
             try
             {
-                ArgumentException.ThrowIfNullOrWhiteSpace(Configuration.Telegram_Bot_Token);
+                ArgumentException.ThrowIfNullOrWhiteSpace(Configuration.telegramBotToken);
                 var json = $"{{\"chat_id\":{chatId},\"text\":\"{msg}\",\"parse_mode\":\"HTML\"}}";
                 using var http = new HttpClient();
                 var content = new StringContent(json, new MediaTypeHeaderValue("application/json"));
@@ -49,7 +49,7 @@ namespace OrnaUBot.Utils
         {
             try
             {
-                ArgumentException.ThrowIfNullOrWhiteSpace(Configuration.Telegram_Bot_Token);
+                ArgumentException.ThrowIfNullOrWhiteSpace(Configuration.telegramBotToken);
                 using var stream = new StreamContent(File.OpenRead(filepath));
                 var content = new MultipartFormDataContent
                 {
