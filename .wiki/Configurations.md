@@ -6,4 +6,5 @@ smbScankassPath | Место расположения стабильной сб�
 projectScankassPath | Локальное место расположение решения ScanKass | String
 telegramBotToken | Токен Telegram-бота | String
 smbLocalPath | Место расположения директории общего доступа | String
-telegramTesterId | Telegram-ID тестировщика | Integer 
+telegramTesterId | TelegramID тестировщика | Integer 
+telegramMeId | Собственный TelegramID | Integer 
