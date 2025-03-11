@@ -8,6 +8,7 @@ do
 
     #region Меню действий
     Console.WriteLine("1) Обновление инсталятора ScanKass");
+    Console.WriteLine("2) Заказ обеда");
     Console.WriteLine();
     Console.WriteLine("0) Выход из приложения");
     #endregion
@@ -20,7 +21,8 @@ do
     var msg = code switch
     {
         0 => Exit(),
-        1 => ScanKass.UpdateInstaller().Result
+        1 => ScanKass.UpdateInstaller().Result,
+        2 => Borshch18.SendOrder().Result
     };
     #endregion
 

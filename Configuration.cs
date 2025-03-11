@@ -9,7 +9,8 @@ internal static class Configuration
     public static string Telegram_Bot_Token { get; private set; } = null!;
     public static string SMB_Local_Path { get; private set; } = null!;
     public static long Telegram_Tester_Id { get; private set; }
-    
+    public static long Telegram_Me_Id { get; private set; }
+
     internal static string AppDataPath => 
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OrnaUBot");
 
@@ -30,6 +31,7 @@ internal static class Configuration
         Telegram_Bot_Token = json[FormatText(nameof(Telegram_Bot_Token))]!.GetValue<string>();
         SMB_Local_Path = json[FormatText(nameof(SMB_Local_Path))]!.GetValue<string>();
         Telegram_Tester_Id = json[FormatText(nameof(Telegram_Tester_Id))]!.GetValue<long>();
+        Telegram_Me_Id = json[FormatText(nameof(Telegram_Me_Id))]!.GetValue<long>();
     }
 
     private static string FormatText(string text)
