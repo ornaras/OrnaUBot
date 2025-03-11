@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using OrnaUBot.Utils;
+using System.Text;
 using System.Text.Json.Nodes;
 
 namespace OrnaUBot.Scenario;
@@ -22,14 +23,7 @@ internal static class Borshch18
         }
         res.Append($"<tg-spoiler>{sum} руб.</tg-spoiler>");
 
-        var url = $"https://api.telegram.org/bot{Configuration.Telegram_Bot_Token}/sendMessage";
-        var body =
-            $"{{" +
-            $"\"chat_id\":{Configuration.Telegram_Me_Id}," +
-            $"\"text\":\"{res}\"," +
-            $"\"parse_mode\":\"HTML\"" +
-            $"}}";
-        var msg = await Utils.SendPostRequest(url, body, "Не удалось отправить сообщение");
+        var msg = await TelegramBot.SendMessage(Configuration.Telegram_Me_Id, res.ToString());
 
         return msg ?? "OK";
     }

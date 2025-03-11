@@ -1,4 +1,8 @@
-﻿namespace OrnaUBot.Scenario;
+﻿using OrnaUBot.Extensions;
+using OrnaUBot.Utils;
+using System.Diagnostics;
+
+namespace OrnaUBot.Scenario;
 
 internal static class ScanKass
 {
@@ -30,13 +34,13 @@ internal static class ScanKass
         #region Выгрузка с SMB
         var installer_path = Path.Combine(Configuration.Project_ScanKass_Path, "ScanKassInstaller");
         var app_path = Path.Combine(installer_path, "app");
-        var msg = Utils.CopyAllFiles(Configuration.SMB_ScanKass_Path, app_path, ["zip","db"], "Не удалось скопировать файлы с сервера");
+        var msg = CopyAllFiles(Configuration.SMB_ScanKass_Path, app_path, ["zip","db"], "Не удалось скопировать файлы с сервера");
         if (msg is not null) return msg;
         #endregion
 
         #region Сборка инсталятора
         var args = $"{string.Join(' ', defines)} {Path.Combine(installer_path, "!setup.nsi")}";
-        msg = Utils.StartProcess("makensis", args, "Не удалось собрать установщик");
+        msg = StartProcess("makensis", args, "Не удалось собрать установщик");
         if (msg is not null) return msg;
         #endregion
 
@@ -50,27 +54,56 @@ internal static class ScanKass
 
         if (!isRemote)
         {
-            var url = $"https://api.telegram.org/bot{Configuration.Telegram_Bot_Token}/sendMessage";
-            var body =
-                $"{{" +
-                $"\"chat_id\":{Configuration.Telegram_Tester_Id}," +
-                $"\"text\":\"<b>ScanKassSetup был обновлен</b> и ожидает проверку по пути <code>{Configuration.SMB_Local_Path.Replace("\\", @"\\")}</code>\"," +
-                $"\"parse_mode\":\"HTML\"" +
-                $"}}";
-            msg = await Utils.SendPostRequest(url, body, "Не удалось оповестить тестировщика");
+            var message = $"<b>ScanKassSetup был обновлен</b> и ожидает проверку по пути <code>{Configuration.SMB_Local_Path.Replace("\\", @"\\")}</code>";
+            msg = await TelegramBot.SendMessage(Configuration.Telegram_Tester_Id, message, "Не удалось оповестить тестировщика");
         }
         else
         {
-            var url = $"https://api.telegram.org/bot{Configuration.Telegram_Bot_Token}/sendDocument";
-            var content = new MultipartFormDataContent();
-            content.Add(new StringContent($"Сборка {DateTime.Now:yyyy'-'MM'-'dd' 'HH':'mm}"), "caption");
-            using (var stream = new StreamContent(File.OpenRead(Path.Combine(Configuration.SMB_Local_Path, installer_filename))))
-                content.Add(stream, "document", installer_filename);
-            msg = await Utils.SendPostRequest(url, content, "Не удалось отправить дистрибутив");
+            var message = $"Сборка {DateTime.Now:yyyy'-'MM'-'dd' 'HH':'mm}";
+            var filepath = Path.Combine(Configuration.SMB_Local_Path, installer_filename);
+            msg = await TelegramBot.SendFile(Configuration.Telegram_Tester_Id, message, filepath, "Не удалось отправить дистрибутив");
         }
 
         #endregion
 
         return msg ?? "ОК";
+    }
+
+    private static string? CopyAllFiles(string srcDir, string destDir, string[] ignoreExts, string msgErr)
+    {
+        try
+        {
+            var files = Directory.GetFiles(srcDir);
+            foreach (var file in files)
+            {
+                if (ignoreExts.Contains(file.Split('.')[^1])) continue;
+                var filename = file.Split(Path.DirectorySeparatorChar)[^1];
+                File.Copy(file, Path.Combine(destDir, filename), true);
+            }
+            return null;
+        }
+        catch (Exception e)
+        {
+
+            e.ShowConsole();
+            return msgErr;
+        }
+    }
+
+
+    private static string? StartProcess(string path, string args, string msgErr)
+    {
+        var info = new ProcessStartInfo(path, args)
+        {
+            Verb = "runas",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+        var proc = Process.Start(info)!;
+        proc.WaitForExit();
+        using var error = proc.StandardError;
+        if (error.EndOfStream) return null;
+        new Exception(error.ReadToEnd()).ShowConsole();
+        return msgErr;
     }
 }
