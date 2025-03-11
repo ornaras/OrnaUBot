@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using OrnaUBot.Exceptions;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 
 internal static class Utils
@@ -10,8 +11,9 @@ internal static class Utils
             using var http = new HttpClient();
             var content = new StringContent(json, new MediaTypeHeaderValue("application/json"));
             var resp = await http.PostAsync(url, content);
+            var respContent = await resp.Content.ReadAsStringAsync();
             if (!resp.IsSuccessStatusCode) 
-                throw new Exception($"StatusCode: {(int)resp.StatusCode}");
+                throw new HttpResponseException(resp.StatusCode, respContent);
             return null;
         }
         catch(Exception e)
@@ -27,8 +29,9 @@ internal static class Utils
         {
             using var http = new HttpClient();
             var resp = await http.PostAsync(url, content);
-            if (!resp.IsSuccessStatusCode) 
-                throw new Exception($"StatusCode: {(int)resp.StatusCode}");
+            var respContent = await resp.Content.ReadAsStringAsync();
+            if (!resp.IsSuccessStatusCode)
+                throw new HttpResponseException(resp.StatusCode, respContent);
             return null;
         }
         catch(Exception e)
