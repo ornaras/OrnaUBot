@@ -13,13 +13,9 @@ internal static class Configuration
     public static long telegramMeId { get; private set; }
 #pragma warning restore IDE1006
 
-    internal static string AppDataPath => 
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OrnaUBot");
-
     public static void Init()
     {
-        if(!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
-        var path = Path.Combine(AppDataPath, "settings.json");
+        var path = Constants.ConfFile;
         if (!File.Exists(path))
         {
             File.WriteAllText(path, "{}");
